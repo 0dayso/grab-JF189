@@ -1,0 +1,35 @@
+完成好功能：
+-----1.破掉一台电脑只能操作三个账户的限制：更换ip+固件信息（mac地址/硬盘信息/cpu信息）
+-----2.选择产品，有输入手机验证码就输入，没有就跳过(纪先生说这个先不做)
+-----3.导入登录方式，号码，密码
+-----4.显示每次更新的用户ip
+-----5.选择产品可以一个订单购买多笔
+-----6.导出用户，密码，姓名，积分剩余多少成功几笔
+-----7.导出详细的卡密信息 
+-----8.显示 用户信息+选择的产品信息
+-----9.只允许弹出两次到浏览器，第一次登录成功弹出(为了让浏览器保持缓存)，第二次发送手机验证码成功弹出
+-----10.一个订单购买多笔产品成功，可以抓取下来每个卡密信息
+-----11.每次打开软件是一个批次号，每次成功购买一笔就自动保存到文件带上该批次号，后面覆盖前面的文件保证最新，也可以手动保存，这样就不怕断电
+-----12.不同的登陆方式，做登陆，手机和固话我已经验证通过，[[[[[宽带和会员卡已做好未验证]]]]]]，[[[[[商旅用户和他网用户页面交互方式不一样未做]]]]
+-----13.商旅用户和他网用户 登录方式还没做(纪先生说这个先不做)
+未完成的功能：
+-----1.选择网络类型(无线网卡，或者有线ADSL，或者vpn刷新网络)重新拨号
+-----2.方便加密手机验证码，修改js，直接放缓存
+-----3.导出exe，分俩版本：(1).excel里可以指定登录类型 (2).excel里只能指定手机的登录类型
+
+
+(1)没有登陆访问[登录页]：http://jf.189.cn/Home/Login.aspx
+会自动跳到[单点登陆中心]：https://sso.jf.189.cn/sso/login?service=http://jf.189.cn/Home/Login.aspx
+这个[单点登陆中心]登陆的部分嵌套iframe指向[真正的登陆页面]：
+1.1.全地址：https://uam.ct10000.com/ct10000uam/login?service=https%3A%2F%2Fsso.jf.189.cn%3A443%2F%2Fsso%2Flogin%3Fservice%3Dhttp%3A%2F%2Fjf.189.cn%2FHome%2FLogin.aspx%3Fref%3DaHR0cDovL2pmLjE4OS5jbi9Ib21lL2luZGV4LmFzcHg%3D&serviceId=35000&pl=01002&UserIp=172.17.56.1&register=registerMB&t=Thu%20Apr%2024%202014%2013:33:27%20GMT+0800%20(%E4%B8%AD%E5%9B%BD%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4)
+1.2.简单地址：https://uam.ct10000.com/ct10000uam/login?service=https%3A%2F%2Fsso.jf.189.cn%3A443%2F%2Fsso%2Flogin%3Fservice%3Dhttp%3A%2F%2Fjf.189.cn%2FHome%2FLogin.aspx%3Fref%3DaHR0cDovL2pmLjE4OS5jbi9Ib21lL2luZGV4LmFzcHg%3D&register=registerMB       //&serviceId=35000&pl=01002&UserIp=172.17.56.1，如果不带register=registerMB会跳到另外一个登陆页面
+              http://uam.ct10000.com/ct10000uam/login?service=https%3A%2F%2Fsso.jf.189.cn%3A443%2F%2Fsso%2Flogin%3Fservice%3Dhttp%3A%2F%2Fjf.189.cn%2FHome%2FLogin.aspx%3Fref%3DaHR0cDovL2pmLjE4OS5jbi9Ib21lL2luZGV4LmFzcHg%3D&register=registerMB
+
+登陆成功自动跳转到：https://sso.jf.189.cn/sso/login?service=这个service的地址http://jf.189.cn/Home/Login.aspx
+
+(2)如果登陆成功，访问[登陆页]：http://jf.189.cn/Home/Login.aspx
+会自动跳到[登陆成功后的首页]：http://jf.189.cn/Home/index.aspx会看到用户信息
+
+(3)[验证码地址]：https://uam.ct10000.com/ct10000uam/validateImg.jsp
+
+(4)访问地址是https 443端口的话，抓包工具抓不到，手动把地址改成http的就可以抓到了
