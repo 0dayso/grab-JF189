@@ -81,7 +81,8 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
     String outIp = StringUtils.EMPTY;
     int successCount = 0;//所有用户的成功总数总和 用户算行数
     int selectRow = 0;//选择用户行数
-    boolean isAlreadyBrowse = false;//只允许弹出两次到浏览器，第一次登录成功弹出，第二次发送手机验证码成功弹出
+    boolean isAlreadyBrowse = false;//只允许弹出两次到浏览器，第一次登录成功弹出，第二次发送手机验证码成功弹出//这个变量失效，被tanIe替代
+    boolean tanIe = false;//是否弹出IE
 
     /**
      * 构造函数
@@ -121,7 +122,7 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         tableScrollPane.setViewportView(tablePane);
 
         //表格
-        successTable = new JTable(100, 11);
+        successTable = new JTable(100, 12);
         successTable.setBorder(new LineBorder(Color.BLACK));
         BaseUtils_2.clearSuccessAllAndInitTitle(successTable);
 
@@ -208,6 +209,8 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
     TextField check = new TextField("", 10);
     JLabel checkImgLabel=new JLabel();
     JPanel checkImgPanel = new JPanel();
+    Label getLoginMsgLabel = new Label();
+    JComboBox getLoginMsgComboBox = new JComboBox();
     Button loginButton = new Button();
     Button changeCheckImgButton = new Button();
 
@@ -221,6 +224,9 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
 
     Button reGetGoods = new Button();
     Button reLogin = new Button();
+    Label getLoginMsgLabel2 = new Label();
+    JComboBox getLoginMsgComboBox2 = new JComboBox();
+    Button refreshLoginMsg = new Button();
 
     public void setPanel(){
 
@@ -269,8 +275,13 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         upPanel.add(checkImgPanel);
         changeCheckImgButton.setLabel("刷新");
         upPanel.add(changeCheckImgButton);
+        getLoginMsgLabel.setText("获取登录信息方式：");
+        downPanel.add(getLoginMsgLabel);
+        getLoginMsgComboBox.addItem(LOGIN_MESSAGE_TYPE_1);
+        getLoginMsgComboBox.addItem(LOGIN_MESSAGE_TYPE_2);
+        downPanel.add(getLoginMsgComboBox);
         loginButton.setLabel("提交");
-        upPanel.add(loginButton);
+        downPanel.add(loginButton);
 
         userLabel.setText("");
         upPanel.add(userLabel);
@@ -280,22 +291,30 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         downPanel.add(makeOrderButton);
         smsCheckButton.setLabel("发送验证码");
         downPanel.add(smsCheckButton);
-        smsLabel.setText("手机验证码：");
+        smsLabel.setText("请输入验证码：");
         downPanel.add(smsLabel);
         downPanel.add(smsTextField);
         payOrderButton.setLabel("买单");
         downPanel.add(payOrderButton);
 
+        getLoginMsgLabel2.setText("刷新登录信息方式：");
+        downPanel.add(getLoginMsgLabel2);
+        getLoginMsgComboBox2.addItem(LOGIN_MESSAGE_TYPE_1);
+        getLoginMsgComboBox2.addItem(LOGIN_MESSAGE_TYPE_2);
+        downPanel.add(getLoginMsgComboBox2);
+        refreshLoginMsg.setLabel("刷新登录信息");
+        downPanel.add(refreshLoginMsg);
+
         reGetGoods.setLabel("更换产品");
-        downPanel.add(reGetGoods);
+        upPanel.add(reGetGoods);
         reLogin.setLabel("重新登录");
         downPanel.add(reLogin);
 
         //初始化省信息
         initProvinceComboBox();
 
-        //显示获取产品部分组件
-        showGetGoodsComps();
+        //隐藏获取产品部分组件
+        hideGetGoodsComps();
         //影藏选择产品部分组件
         hideGoodsComps();
         //影藏登陆部分组件
@@ -327,6 +346,15 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         getGoodsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+//                try {
+//                    BaseUtils_2.orderDetail("7694726", cookies);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                if(true){
+//                    return;
+//                }//todo
+
                 if(grabJF189.inputDtoList.size() == 0){
                     BaseUtils_2.alertWarnMessage("请载入Excel！");
                     return;
@@ -366,14 +394,21 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
 
                 //影藏选择产品部分组件
                 hideGoodsComps();
-                //显示登陆部分组件
-                showLoginComps();
+                //隐藏登陆部分组件
+                hideLoginComps();
                 // 加载验证码
-                loadCheckImg();
+                //loadCheckImg();
                 //显示更换产品按钮
                 reGetGoods.setVisible(true);
                 //影藏重新登录按钮
-                reLogin.setVisible(false);
+                reLogin.setVisible(true);
+                if(StringUtils.isNotBlank(mobile)){
+                    //显示支付部分组件
+                    showPayComps();
+                } else {
+                    //显示登陆部分组件
+                    showLoginComps();
+                }
             }
         });
         changePageButton.addActionListener(new AbstractAction() {
@@ -436,7 +471,10 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
                 String jumpUrl = (String) headerMap.get("Location");
                 //跳转
                 result = BaseUtils_2.jump(grabJF189, jumpUrl);
-                BaseUtils_2.browse((String)result.get(KEY_BROWSE_URL1));
+                //判是否弹出ie
+                if(tanIe){
+                    BaseUtils_2.browse((String)result.get(KEY_BROWSE_URL1));
+                }
                 isSuccess = (Boolean) result.get(KEY_IS_SUCCESS);//判是否成功
                 if (!isSuccess) {
                     return;
@@ -445,31 +483,44 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
 
                 //获取登陆信息
                 try{
-                    refreshLoginInfo(cookies);
+                    //获取登录信息方式
+                    String type = getLoginMsgComboBox.getSelectedItem().toString();
+                    refreshLoginInfo(cookies, type);
                 } catch (Exception e){
-                    String errorMessage = "登录成功，但是获取登陆信息失败，重新登陆...";
+                    String errorMessage = "登录成功，但是获取登陆信息失败，请选择产品后手动刷新";
                     logger.error(errorMessage, e);
                     BaseUtils_2.loggerOut(grabJF189, errorMessage);
-                    BaseUtils_2.alertErrorMessage(errorMessage);
-                    try{
-                        refreshLoginInfo(cookies);
-                    } catch (Exception e1){
-                        errorMessage = "登录成功，但是获取登陆信息失败，请重新登陆！";
-                        logger.error(errorMessage, e1);
-                        BaseUtils_2.loggerOut(grabJF189, errorMessage);
-                        BaseUtils_2.alertErrorMessage(errorMessage);
-                        return;
-                    }
+                    BaseUtils_2.alertWarnMessage(errorMessage);
                 }
 
                 //影藏登陆部分组件
                 hideLoginComps();
-                //显示支付部分组件
-                showPayComps();
+                //隐藏支付部分组件
+                hidePayComps();
                 //显示更换产品按钮
                 reGetGoods.setVisible(true);
                 //显示重新登录按钮
                 reLogin.setVisible(true);
+                //点击更换产品按钮
+                clickReGetGoods();
+            }
+        });
+        //刷新登录信息
+        refreshLoginMsg.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //刷新登录信息
+                try{
+                    userLabel.setText("刷新登录信息中...*个数：");
+                    //刷新登录信息方式
+                    String type = getLoginMsgComboBox2.getSelectedItem().toString();
+                    refreshLoginInfo(cookies, type);
+                } catch (Exception e){
+                    String errorMessage = "刷新登录信息失败，请再次手动刷新";
+                    logger.error(errorMessage, e);
+                    BaseUtils_2.loggerOut(grabJF189, errorMessage);
+                    BaseUtils_2.alertWarnMessage(errorMessage);
+                }
             }
         });
         //刷新验证码
@@ -640,10 +691,13 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
 
                     url = "http://jf.189.cn/XNDH/DummyOrderPay.aspx?OrderID=" + orderId;
                     //只允许弹出两次到浏览器，第一次登录成功弹出(为了让浏览器保持缓存)，第二次发送手机验证码成功弹出
-                    if(!isAlreadyBrowse){
-                        BaseUtils_2.browse(url);
-                        isAlreadyBrowse = true;
-                    }
+                    //if(!isAlreadyBrowse){
+                        //判是否弹出ie
+                        if(tanIe){
+                            BaseUtils_2.browse(url);
+                        }
+                    //    isAlreadyBrowse = true;
+                    //}
                 } else {
                     msgSendSuccess = false;
                     String errorMessage = "短信验证码发送失败！";
@@ -722,7 +776,9 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
 
                 //买单好 不管成功失败 刷新登陆信息 然后再查询订单结果
                 try{
-                    refreshLoginInfo(cookies);
+                    //获取登录信息方式
+                    String type = getLoginMsgComboBox.getSelectedItem().toString();
+                    refreshLoginInfo(cookies, type);
                 } catch (Exception e){
                     String errorMessage = "刷新用户剩余积分失败，继续查询订单结果！";
                     logger.error(errorMessage, e);
@@ -741,38 +797,16 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
                     return;
                 }
 
-                isSuccess = (Boolean)result.get(HttpClientUtils.KEY_IS_SUCCESS);//判是否成功
-                if(!isSuccess)
-                {
-                    String errorMessage = "查询订单[" + orderId + "]结果失败！";
-                    BaseUtils_2.loggerOut(grabJF189, errorMessage);
-                    BaseUtils_2.alertErrorMessage(errorMessage);
-                    return;
-                }
-                webContent = (String)result.get(KEY_RESP_STR);//网页内容
-                logger.info("+++++++++++返回内容" + webContent);
-                BaseUtils_2.loggerOut(grabJF189, webContent);//todo
+                boolean isOrderSuccess  = (Boolean)result.get(HttpClientUtils.KEY_IS_SUCCESS);//判是否成功
 
-                boolean isOrderSuccess = webContent.indexOf("成功") > -1;
-                String cardNo = StringUtils.EMPTY;
-                String password = StringUtils.EMPTY;
-                String deadLine = StringUtils.EMPTY;
                 if(isOrderSuccess){
-                    String indexStr = "<li><b>卡号：</b><span>";
-                    int index = webContent.indexOf(indexStr);
-                    while (index > 0){
-                        webContent = webContent.substring(index + indexStr.length());
-                        indexStr = "</span><b>密码：</b><span>";
-                        index = webContent.indexOf(indexStr);
-                        cardNo = webContent.substring(0, index);
-                        webContent = webContent.substring(index + indexStr.length());
-                        indexStr = "</span><b>有效期：</b><span>";
-                        index = webContent.indexOf(indexStr);
-                        password = webContent.substring(0, index);
-                        webContent = webContent.substring(index + indexStr.length());
-                        indexStr = "</span><b></b><span>";
-                        index = webContent.indexOf(indexStr);
-                        deadLine = webContent.substring(0, index);
+                    List<String> orderStringList = (List<String>)result.get(HttpClientUtils.KEY_ORDER_LIST);//订单列表
+                    for(String str : orderStringList){
+                        String[] array = str.split(",");
+                        String cardNo = array[0];
+                        String password = array[1];
+                        String deadLine = array[2];
+
                         //订单结果
                         Order order = new Order(mobile, userName, moneyGoods.getGoodsId(), moneyGoods.getGoodsName(),
                                 moneyGoods.getPrice(), buyNum, orderId, isOrderSuccess, cardNo, password, deadLine);
@@ -781,9 +815,6 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
                         //添加成功记录到表格中
                         successCount ++;
                         BaseUtils_2.putSuccessTable(successTable, order, successCount) ;
-
-                        indexStr = "<li><b>卡号：</b><span>";
-                        index = webContent.indexOf(indexStr);
                     }
                 }
 
@@ -983,6 +1014,8 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         check.setVisible(false);
         checkImgLabel.setVisible(false);
         checkImgPanel.setVisible(false);
+        getLoginMsgLabel.setVisible(false);
+        getLoginMsgComboBox.setVisible(false);
         loginButton.setVisible(false);
         changeCheckImgButton.setVisible(false);
     }
@@ -1017,6 +1050,8 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         check.setVisible(true);
         checkImgLabel.setVisible(true);
         checkImgPanel.setVisible(true);
+        getLoginMsgLabel.setVisible(true);
+        getLoginMsgComboBox.setVisible(true);
         loginButton.setVisible(true);
         changeCheckImgButton.setVisible(true);
     }
@@ -1056,12 +1091,18 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         smsLabel.setVisible(false);
         smsTextField.setVisible(false);
         payOrderButton.setVisible(false);
+        getLoginMsgLabel2.setVisible(false);
+        getLoginMsgComboBox2.setVisible(false);
+        refreshLoginMsg.setVisible(false);
     }
 
     /**
      * 显示支付部分组件
      */
     public void showPayComps(){
+        InputDto_2 inputDto = BaseUtils_2.getInputDtoByMobile(mobile, grabJF189);
+        userLabel.setText("手机号：[" + mobile + "],用户姓名：[" + userName + "],备注：[" + inputDto.getResv() + "],积分：[" + jf +
+                "],产品名称：[" + moneyGoods.getGoodsName() + "],积分：[" + moneyGoods.getPrice() + "]*个数：");
         userLabel.setVisible(true);
         buyNumTextField.setVisible(true);
         makeOrderButton.setVisible(true);
@@ -1069,6 +1110,9 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         smsLabel.setVisible(true);
         smsTextField.setVisible(true);
         payOrderButton.setVisible(true);
+        getLoginMsgLabel2.setVisible(true);
+        getLoginMsgComboBox2.setVisible(true);
+        refreshLoginMsg.setVisible(true);
     }
 
     /**
@@ -1092,15 +1136,15 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
      */
     public void setSuccessTableColumnWidth(){
         TableColumn column = successTable.getColumnModel().getColumn(0);
-        column.setPreferredWidth(80);
-        column = successTable.getColumnModel().getColumn(1);
         column.setPreferredWidth(50);
+        column = successTable.getColumnModel().getColumn(1);
+        column.setPreferredWidth(80);
         column = successTable.getColumnModel().getColumn(2);
         column.setPreferredWidth(50);
         column = successTable.getColumnModel().getColumn(3);
-        column.setPreferredWidth(200);
+        column.setPreferredWidth(50);
         column = successTable.getColumnModel().getColumn(4);
-        column.setPreferredWidth(60);
+        column.setPreferredWidth(200);
         column = successTable.getColumnModel().getColumn(5);
         column.setPreferredWidth(60);
         column = successTable.getColumnModel().getColumn(6);
@@ -1108,10 +1152,12 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         column = successTable.getColumnModel().getColumn(7);
         column.setPreferredWidth(60);
         column = successTable.getColumnModel().getColumn(8);
-        column.setPreferredWidth(100);
+        column.setPreferredWidth(60);
         column = successTable.getColumnModel().getColumn(9);
         column.setPreferredWidth(100);
         column = successTable.getColumnModel().getColumn(10);
+        column.setPreferredWidth(100);
+        column = successTable.getColumnModel().getColumn(11);
         column.setPreferredWidth(100);
     }
 
@@ -1119,17 +1165,20 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
      * 刷新登陆信息 主要为了显示实时积分
      * @param cookies
      */
-    public void refreshLoginInfo(Cookie[] cookies){
-        Map result = BaseUtils_2.getLoginInfo(grabJF189, cookies);
+    public void refreshLoginInfo(Cookie[] cookies, String type){
+        mobile = userNameTextField.getText();
+        Map result = new HashMap();
+        if(StringUtils.equals(LOGIN_MESSAGE_TYPE_1, type)){
+            result = BaseUtils_2.getLoginInfo(grabJF189, cookies);
+        } else if(StringUtils.equals(LOGIN_MESSAGE_TYPE_2, type)){
+            result = BaseUtils_2.getLoginInfo2(grabJF189, cookies);
+        }
         boolean isSuccess = (Boolean) result.get(KEY_IS_SUCCESS);//判是否成功
         if (!isSuccess) {
             return;
         }
-        mobile = userNameTextField.getText();
         userName = (String)result.get(KEY_USER_NAME);
         jf = (String)result.get(KEY_JI_FEN);
-        userLabel.setText("手机号：[" + mobile + "],用户姓名：[" + userName + "],积分：[" + jf +
-                "],产品名称：[" + moneyGoods.getGoodsName() + "],积分：[" + moneyGoods.getPrice() + "]*个数：");
 
         // 得到DefaultTableModel对象
         DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
@@ -1138,6 +1187,8 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
         InputDto_2 inputDto = BaseUtils_2.getInputDtoByMobile(mobile, grabJF189);
         inputDto.setUserName(userName);
         inputDto.setJf(StringUtils.EMPTY + jf);
+        userLabel.setText("手机号：[" + mobile + "],用户姓名：[" + userName + "]备注：[" + inputDto.getResv() + "],积分：[" + jf +
+                "],产品名称：[" + moneyGoods.getGoodsName() + "],积分：[" + moneyGoods.getPrice() + "]*个数：");
     }
 
     /**
@@ -1205,11 +1256,13 @@ public class CenterPanel_2 extends JPanel implements BaseInterface_2
      */
     public void clickReLogin(){
         //如果没有产品列表
-        if(moneyGoodsList.moneyGoodsList.size() == 0){
-            //点击更换产品按钮
-            clickReGetGoods();
-            return;
-        }
+//        if(moneyGoodsList.moneyGoodsList.size() == 0){
+//            //点击更换产品按钮
+//            clickReGetGoods();
+//            return;
+//        }
+        //影藏获取产品部分组件
+        hideGetGoodsComps();
         //影藏选择产品部分组件
         hideGoodsComps();
         //显示登陆部分组件

@@ -7,13 +7,14 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * 右边内容类
  * Create by Gxx
  * Time: 2013-10-09 00:28
  */
-class RightPanel_2 extends JPanel
+class RightPanel_2 extends JPanel implements BaseInterface_2
 {
     /**
      * 工具类
@@ -26,9 +27,19 @@ class RightPanel_2 extends JPanel
     public String filePath;
 
     /**
+     * 有效期
+     */
+    Label deadLineLabel = new Label();
+
+    /**
      * 外网ip
      */
     Label outIpLabel = new Label();
+
+    /**
+     * 是否弹出IE
+     */
+    JButton ieButton;
 
     /**
      * 构造函数
@@ -38,6 +49,11 @@ class RightPanel_2 extends JPanel
         this.grabJF189 = grabJF189;
 
         this.setLayout(new GridLayout(16, 1));
+
+        //有效期
+        deadLineLabel.setText("有效期:" + DateUtil.getCNDate(DateUtil.getDate(
+                PropertyUtil.getInstance().getProperty(CONFIG_DEAD_LINE))));
+        add(deadLineLabel);
 
         JButton loadButton = new JButton("载入Excel");
         loadButton.addActionListener(new ActionListener() {
@@ -110,6 +126,15 @@ class RightPanel_2 extends JPanel
         });
         add(saveButton);
 
+        ieButton = new JButton("切换弹浏览器：弹");
+        ieButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                grabJF189.centerPanel.tanIe = !grabJF189.centerPanel.tanIe;
+                ieButton.setText("切换弹浏览器：" + (grabJF189.centerPanel.tanIe?"":"不") + "弹");
+            }
+        });
+        //add(ieButton);
+
         JButton clearLogButton = new JButton("清空日志");
         clearLogButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -128,6 +153,35 @@ class RightPanel_2 extends JPanel
             }
         });
         add(resetNetButton);
+
+        JButton openSaveButton = new JButton("打开保存文件夹");
+        openSaveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String filePath = BaseUtils_2.getSameDirWithLib() + "save";
+                String[] cmd = new String[5];
+                cmd[0] = "cmd";
+                cmd[1] = "/c";
+                cmd[2] = "start";
+                cmd[3] = " ";
+                cmd[4] = filePath;
+                try {
+                    Runtime.getRuntime().exec(cmd);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        add(openSaveButton);
+
+        JButton logOutButton = new JButton("退出");
+        logOutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //重新登陆
+                grabJF189.centerPanel.clickReLogin();
+            }
+        });
+        add(logOutButton);
+
         //显示外网ip
         showOutIp(grabJF189);
         add(outIpLabel);

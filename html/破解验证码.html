@@ -1,0 +1,140 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+    <title>天翼积分商城下单支付</title>
+    <link rel="shortcut icon" href="http://jf.189.cn/XNDH/favicon.ico" type="image/x-icon" />
+
+    
+
+    <script src="http://jf.189.cn/XNDH/newjs/jquery.min.js" type="text/javascript"></script> 
+
+    <script src="http://jf.189.cn/XNDH/newjs/orderpayjs.js" type="text/javascript"></script>
+
+    <script src="http://jf.189.cn/XNDH/newjs/floatbox.js" type="text/javascript"></script>
+    
+
+
+
+    
+    
+    <script type="text/javascript"> 
+        var myVoucher= 0;//我的抵用券
+        var myIntegral=1160;//我的积分
+        var totalPay=970;//订单总额
+        //异步发送短信随机码用
+        var custId=0; 
+        var userloginid='18092744815';
+        var orderid=8125325;
+        
+
+    </script>
+    
+    <script src="http://jf.189.cn/XNDH/Common/scripts/js/PassGuardCtrl.js" type="text/javascript"></script>
+    <script src="dummyPay.js" type="text/javascript"></script>
+
+    
+    <style type="text/css">
+        p{margin:0px;}
+        	 
+        UL {
+	        PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+        }
+        UL {
+	        LIST-STYLE-TYPE: none; LIST-STYLE-IMAGE: none
+        }
+        IMG{border:0px}
+        .ocx_style{border:1px solid #7F9DB9; width:132px; height:25px;}
+    </style>
+</head>
+<body>
+    <form name="form1" method="post" action="DummyOrderPay.aspx?OrderID=8125325" id="form1">
+<div>
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTg1Mjk3NTUzMQ8WCB4Nb3JkZXJfdHlwZV9ucgUBMB4KSXNQcm92aW5jZQUBMB4IdG90YWxwYXkCygceEW9yZGVyTmVlZE1peE1vbmV5ZhYMAgEPFgIeBFRleHQFATBkAgMPFgIfBAUEMTE2MGQCBQ8WAh8EBQM5NzBkAgkPFgIfBAUNJzE4MDkyNzQ0ODE1J2QCCw8WAh8EBQc4MTI1MzI1ZAIND2QWFAIBDw8WAh8EBQExZGQCCQ8PFgIfBAUBMGRkAgsPFgIfBAUHODEyNTMyNWQCDQ8WAh8EBcMCPGEgY2xhc3M9ImZsIiBocmVmPSIvZHVpaHVhbi9wcm9kdWN0c0luZm8uYXNweD9JRD01MjAzOCIgdGFyZ2V0PSJfYmxhbmsiPjxpbWcgc3JjPSJodHRwOi8vMTE2LjIyOC41NS4xNDIvUGVyTWVyY2hhbnQvY29tbW9kaXR5LzIwMTQwMzI2LzIwMTQwMzI2MTMyMjEycy5qcGciICBvbmVycm9yPXRoaXMuc3JjPSdpbWFnZXMvbm8uanBnJyBib3JkZXI9JzAnIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgLz48L2E+PGEgaHJlZj0iL2R1aWh1YW4vcHJvZHVjdHNJbmZvLmFzcHg/SUQ9NTIwMzgiIHRhcmdldD0iX2JsYW5rIj4xMOWFg+WPi+Wunei0reeJqeWIuDwvYT48YnIgLz5kAg8PFgIfBAUOOTcw56ev5YiGKzDlhYNkAhEPFgIfBAUBMWQCEw8WAh8EBQnmnKrmlK/ku5hkAhUPFgIfBAUDOTcwZAIXD2QWBgIBDxYCHgdWaXNpYmxlZxYCAgUPFgIfBAUBMGQCAw8WBB4FY2xhc3MFCHNlbGVjdGVkHwVnFgoCAQ8PFgIfBAUDOTcwZGQCAw8WAh4IZGlzYWJsZWRkZAIFDxYCHwQFBDExNjBkAgcPDxYCHwQFAzk3MGRkAgkPFgIfBWdkAgUPFgIfBWdkAhsPZBYEAgEPFgIfBWgWAgIBDxBkZBYBZmQCAw8WAh8FZ2QYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgIFC2Nia0ludGVncmFsBQtzdWJtaXRPcmRlcg==" />
+</div>
+
+    <div style="display: none;"> 
+        <span id="HidAuthType">1</span>  
+        <input type="hidden" name="HidInputVoucher" id="HidInputVoucher" value="0" />
+        <input type="hidden" name="HidInputIntegral" id="HidInputIntegral" value="970" />
+        <input type="hidden" name="HidInputMoney" id="HidInputMoney" value="0" />
+        <span id="lblNeedMinMoney">0</span>
+    </div>
+    <div id="wrap">
+        <div id="mainContent">
+            <div>
+                <div id="div_Auth"> 
+                    <script type="text/javascript">
+                    	if(navigator.userAgent.indexOf("MSIE")<0){
+                           navigator.plugins.refresh();
+                        }
+                        var pgeditor = new $.pge({
+	                        pgePath: "./ocx/",//控件文件目录
+	                        pgeId: "_ocx_password",//控件ID
+	                        pgeEdittype: 1,//控件类型,0星号,1明文
+	                        pgeEreg1: "[\\s\\S]*",//输入过程中字符类型限制
+	                        pgeEreg2: "[\\s\\S]{6,18}",	//输入完毕后字符类型判断条件
+	                        pgeMaxlength: 18,//允许最大输入长度
+	                        pgeTabindex: 2,//tab键顺序
+	                        pgeClass: "ocx_style",//控件css样式
+	                        pgeInstallClass: "ocx_style",//针对安装或升级
+	                        pgeOnkeydown:"FormSubmit()",//回车键响应函数
+                            tabCallback:"dummyPay"//非IE tab键焦点切换的ID
+                        });	
+                        window.onload = function(){	 
+                     
+                           pgeditor.pgInitialize();//初始化控件
+                           //window.setInterval("GetLevel()",200); //实时显示密码强度
+                        }
+                    </script> 
+                    <div id="verification">
+                        
+                        <p id="PhoneAuth">
+                            <table border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td  id="_ocx_password_str">
+                                        
+                                        <script type="text/javascript">pgeditor.generate()</script>
+                                    </td>
+                                </tr>
+                            </table>
+                        </p>
+                        <p>
+                            <input type="hidden" name="hidpw" id="hidpw" />
+                        </p>
+                        <p>
+                        <button onclick="FormSubmit();return false;">确定</button>
+                        </p>
+                        <p>
+                            <input type="hidden" name="hidmac" id="hidmac" />
+                            <input type="hidden" name="hiddisk" id="hiddisk" />
+                            <input type="hidden" name="hidcpu" id="hidcpu" />
+                            
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="text-align:left;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="width:150px;">
+
+                            <script src="http://jf.189.cn/XNDH/Common/scripts/js/floatbox2.js" type="text/javascript"></script>
+                        </td>
+                        <td>
+                            <div style="display:none;">
+                            <input type="image" name="submitOrder" id="submitOrder" class="comfirButton" src="http://jf.189.cn/XNDH/images/ok.jpg" style="border-width:0px;" />
+                            </div>
+                        </td>
+                        <td style="width:150px;"></td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

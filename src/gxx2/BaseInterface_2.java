@@ -8,6 +8,10 @@ package gxx2;
 public interface BaseInterface_2
 {
     /**
+     * 配置有效期
+     */
+    public static final String CONFIG_DEAD_LINE = "dead_line";
+    /**
      * 返回结果中是否成功，可能的值：true，false
      */
     public static final String KEY_IS_SUCCESS = "isSuccess";
@@ -40,6 +44,11 @@ public interface BaseInterface_2
     public static final String KEY_MONEY_GOODS_LIST = "moneyGoodsList";
 
     /**
+     * 订单列表
+     */
+    public static final String KEY_ORDER_LIST = "orderList";
+
+    /**
      * 用户姓名
      */
     public static final String KEY_USER_NAME = "userName";
@@ -65,12 +74,12 @@ public interface BaseInterface_2
     /**
      * EXCEL的第一行数据
      */
-    public static final String[] EXCEL_TITLE = {"登录方式","用户名","密码","姓名","剩余积分","成功笔数"};
+    public static final String[] EXCEL_TITLE = {"登录方式","用户名","密码","姓名","剩余积分","成功笔数","备注"};
 
     /**
      * EXCEL的第一行数据
      */
-    public static final String[] DETAIL_EXCEL_TITLE = {"手机号","用户名","产品ID","产品名称","单笔积分",
+    public static final String[] DETAIL_EXCEL_TITLE = {"序号","手机号","用户名","产品ID","产品名称","单笔积分",
             "笔数","订单号","结果","卡号","卡密","有效期"};
 
     /**
@@ -149,4 +158,10 @@ public interface BaseInterface_2
      * 判网络是不是通的 访问得URL
      */
     public static final String[] CHECK_NET_WORK_LINKED_URLS = new String[]{"http://www.baidu.com", "http://www.google.cn"};
+
+    /**
+     * 获取登录信息方式
+     */
+    public static final String LOGIN_MESSAGE_TYPE_1 = "方式一(错误率低)";
+    public static final String LOGIN_MESSAGE_TYPE_2 = "方式二(一定错误率)";
 }

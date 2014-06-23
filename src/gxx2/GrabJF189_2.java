@@ -107,6 +107,15 @@ public class GrabJF189_2 extends JFrame implements BaseInterface_2 {
 
         // 展示
         show();
+
+        /**
+         * 是否已经过期
+         * @return true 表示过期 false 表示未过期
+         */
+        if(BaseUtils_2.isDeadLineOff()){
+            BaseUtils_2.alertWarnMessage("对不起，您的软件已过期！");
+            System.exit(0);
+        }
     }
 
     /**

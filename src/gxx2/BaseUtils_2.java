@@ -131,7 +131,7 @@ public class BaseUtils_2 implements BaseInterface_2
          * 本地运行 图片放在桌名
          * return "C:\\Users\\sky\\Desktop\\";
          */
-//        return "C:\\Users\\sky\\Desktop\\";//todo
+//        return "C:\\Users\\sky\\Desktop\\image_cache\\";//todo
         return getSameDirWithLib() + "image_cache\\";
     }
 
@@ -144,7 +144,7 @@ public class BaseUtils_2 implements BaseInterface_2
          * 本地运行 图片放在桌名
          * return "C:\\Users\\sky\\Desktop\\";
          */
-//        return "C:\\Users\\sky\\Desktop\\";//todo
+//        return "C:\\Users\\sky\\Desktop\\save\\";//todo
         return getSameDirWithLib() + "save\\";
     }
 
@@ -1042,13 +1042,15 @@ public class BaseUtils_2 implements BaseInterface_2
 //                    tempRow.getCell(4).setCellValue(0);
 //                }
 
-                dto = new InputDto_2(getHSSFCellValue(tempRow.getCell(0)), getHSSFCellValue(tempRow.getCell(1)), getHSSFCellValue(tempRow.getCell(2)),
-                        getHSSFCellValue(tempRow.getCell(3)), getHSSFCellValue(tempRow.getCell(4)), getHSSFCellValue(tempRow.getCell(5)));
+                dto = new InputDto_2(getHSSFCellValue(tempRow.getCell(0)), getHSSFCellValue(tempRow.getCell(1)),
+                        getHSSFCellValue(tempRow.getCell(2)), getHSSFCellValue(tempRow.getCell(3)),
+                        getHSSFCellValue(tempRow.getCell(4)), getHSSFCellValue(tempRow.getCell(5)),
+                        getHSSFCellValue(tempRow.getCell(6)));
             } catch (Exception e)
             {
                 e.printStackTrace();
                 isRowError = true;
-                dto = new InputDto_2("", "", "", "", "", "");
+                dto = new InputDto_2("", "", "", "", "", "", "");
             }
 
             if(isRowError)
@@ -1062,12 +1064,12 @@ public class BaseUtils_2 implements BaseInterface_2
              * 2.支持各种登录方式
              */
             /**
-             * //加上这段代码，则只支持手机登录方式
-             * if(!dto.getLoginType().equals("手机")){
-             *      dto.isValidate = false;
-             *      dto.errorMsg = "此版本只支持手机登录方式！";
-             * }
              */
+            //加上这段代码，则只支持手机登录方式 todo
+//            if(!dto.getLoginType().equals("手机")){
+//                 dto.isValidate = false;
+//                 dto.errorMsg = "此版本只支持手机登录方式！";
+//            }
             grabJF189.inputDtoList.add(dto);
         }
     }
@@ -1116,6 +1118,40 @@ public class BaseUtils_2 implements BaseInterface_2
      * @return
      */
     public static Map getLoginInfo(GrabJF189_2 grabJF189, Cookie[] cookies) {
+        BaseUtils_2.loggerOut(grabJF189, "您正在使用[方式一(错误率低)]获取登陆信息");
+        String url = "http://jf.189.cn/SelfHelp/Index.aspx";
+        logger.info("登陆成功,获取登陆信息url=" + url);
+        Map result = HttpClientUtils.getUrl(url, "UTF-8", "GBK", cookies);//返回结果 可以不带cookie
+        boolean isSuccess = (Boolean)result.get(KEY_IS_SUCCESS);//判是否成功
+        if(!isSuccess)
+        {
+            String errorMessage = "获取登陆信息失败！";
+            BaseUtils_2.loggerOut(grabJF189, errorMessage);
+            BaseUtils_2.alertErrorMessage(errorMessage);
+            return result;
+        }
+        String webContent = (String)result.get(HttpClientUtils.KEY_RESP_STR);//网页内容
+        String indexStr = "尊敬的<b>";
+        webContent = webContent.substring(webContent.indexOf(indexStr) + indexStr.length());
+        indexStr = "</b>";
+        String userName = webContent.substring(0, webContent.indexOf(indexStr));
+        indexStr = "<span>积分：";
+        webContent = webContent.substring(webContent.indexOf(indexStr) + indexStr.length());
+        indexStr = "\n" + "                            积分 ";
+        String jiFen = webContent.substring(0, webContent.indexOf(indexStr));
+        logger.info("获取登陆信息，返回内容" + webContent);
+        result.put(KEY_USER_NAME, userName);
+        result.put(KEY_JI_FEN, jiFen);
+        return result;
+    }
+
+    /**
+     * 获取登陆信息
+     * @param cookies
+     * @return
+     */
+    public static Map getLoginInfo2(GrabJF189_2 grabJF189, Cookie[] cookies) {
+        BaseUtils_2.loggerOut(grabJF189, "您正在使用[方式二(一定错误率)]获取登陆信息");
         String url = "http://jf.189.cn/home/ajax.ashx?g=nocachelogin";
         logger.info("登陆成功,获取登陆信息url=" + url);
         Map result = HttpClientUtils.getUrl(url, "UTF-8", "GBK", cookies);//返回结果 可以不带cookie
@@ -1141,6 +1177,19 @@ public class BaseUtils_2 implements BaseInterface_2
         return result;
     }
 
+//    /**
+//     * 查询订单结果
+//     * @param orderId
+//     * @param cookies
+//     * @return
+//     * @throws Exception
+//     */
+//    public static Map orderDetail(String orderId, Cookie[] cookies) throws Exception {
+//        String url = "http://jf.189.cn/SelfHelp/OrderDetail.aspx?S=0&ORDERID=" + orderId;
+//        Map result = HttpClientUtils.getUrl(url, "UTF-8", "GBK", cookies);//返回结果 可以不带cookie
+//        return result;
+//    }
+
     /**
      * 查询订单结果
      * @param orderId
@@ -1149,8 +1198,64 @@ public class BaseUtils_2 implements BaseInterface_2
      * @throws Exception
      */
     public static Map orderDetail(String orderId, Cookie[] cookies) throws Exception {
-        String url = "http://jf.189.cn/SelfHelp/OrderDetail.aspx?S=0&ORDERID=" + orderId;
-        Map result = HttpClientUtils.getUrl(url, "UTF-8", "GBK", cookies);//返回结果 可以不带cookie
+        String url = "http://jf.189.cn/SelfHelp/ajaxManager.aspx";
+        //总共多少笔 初始化为1只是为了大于count，执行第一次查询
+        //循环翻页
+        PostMethod method = new PostMethod(url);
+        //参数
+        method.addParameter("method", "post");
+        method.addParameter("Type", "GetCardList");
+        method.addParameter("pageIndex", "1");//一页1000条 就可以全部拉下来了 所以就一页
+        method.addParameter("pageSize", "1000");//一页1000条 就可以全部拉下来了
+        method.addParameter("datetimeType", "0");
+        method.addParameter("OrderID", orderId);//7655075
+        method.addParameter("tt", "0.8371217439416796");
+
+        //结果集合
+        Map result = HttpClientUtils.connect(method, "GBK", cookies);//返回结果
+        //返回结果 可以不带cookie 但是返回会带cookie
+        boolean isSuccess = (Boolean)result.get(HttpClientUtils.KEY_IS_SUCCESS);//判是否成功
+        if(!isSuccess)
+        {
+            throw new RuntimeException("查询订单[" + orderId + "]结果失败！");
+        }
+        String webContent = (String)result.get(KEY_RESP_STR);//网页内容
+        logger.info("+++++++++++返回内容" + webContent);
+        System.out.println("+++++++++++返回内容" + webContent);
+
+        JSONArray object = (JSONArray) new JSONTokener( webContent ).nextValue();
+        if(object.size() < 1){
+            throw new RuntimeException("查询订单[" + orderId + "]结果失败！");
+        }
+
+        result = new HashMap();
+
+        JSONObject countObject = object.getJSONObject(0);
+        String count = StringUtils.trimToEmpty((String) countObject.get("ICount"));
+        result.put(KEY_IS_SUCCESS, StringUtils.isNotBlank(count) && !StringUtils.equals("0", count));
+
+        if(object.size() < 2){
+            return result;
+        }
+
+        Map ret = new HashMap();
+        for ( Iterator iterator = object.getJSONObject(1).entrySet().iterator(); iterator.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            ret.put( entry.getKey(), entry.getValue() );
+        }
+        JSONArray json = JSONArray.fromObject(ret.get("DataResult"));
+        List<String> orderList = new ArrayList<String>();
+        for(int i=0;i<json.size();i++)
+        {
+            JSONObject temp = json.getJSONObject(i);
+            String cardNo = (StringUtils.trimToEmpty((String) temp.get("CARDNO")));
+            String password = (StringUtils.trimToEmpty((String) temp.get("PASSWD")));
+            String expressDate = (StringUtils.trimToEmpty((String) temp.get("EXPRESSDATE")));
+            orderList.add(cardNo + "," + password + "," + expressDate);
+            System.out.println(cardNo + "," + password + "," + expressDate);
+        }
+        result.put(KEY_ORDER_LIST, orderList);
         return result;
     }
 
@@ -1198,19 +1303,20 @@ public class BaseUtils_2 implements BaseInterface_2
         // 2 得到tableModel
         DefaultTableModel tableModel = (DefaultTableModel) successTable.getModel();
         tableModel.addRow(EMPTY_STRING_ARRAY);
-        successTable.setValueAt(order.getMobile(), successCount, 0);
-        successTable.setValueAt(order.getUserName(), successCount, 1);
+        successTable.setValueAt(StringUtils.EMPTY + successCount, successCount, 0);
+        successTable.setValueAt(order.getMobile(), successCount, 1);
+        successTable.setValueAt(order.getUserName(), successCount, 2);
 
-        successTable.setValueAt(order.getGoodsId(), successCount, 2);
-        successTable.setValueAt(order.getGoodsName(), successCount, 3);
-        successTable.setValueAt(StringUtils.EMPTY + order.getSingleJiFen(), successCount, 4);
-        successTable.setValueAt(StringUtils.EMPTY + order.getBuyNum(), successCount, 5);
+        successTable.setValueAt(order.getGoodsId(), successCount, 3);
+        successTable.setValueAt(order.getGoodsName(), successCount, 4);
+        successTable.setValueAt(StringUtils.EMPTY + order.getSingleJiFen(), successCount, 5);
+        successTable.setValueAt(StringUtils.EMPTY + order.getBuyNum(), successCount, 6);
 
-        successTable.setValueAt(order.getOrderId(), successCount, 6);
-        successTable.setValueAt(order.isSuccess()?"成功":"失败", successCount, 7);//成功才保存
-        successTable.setValueAt(order.getCardNo(), successCount, 8);
-        successTable.setValueAt(order.getPassword(), successCount, 9);
-        successTable.setValueAt(order.getDeadline(), successCount, 10);
+        successTable.setValueAt(order.getOrderId(), successCount, 7);
+        successTable.setValueAt(order.isSuccess()?"成功":"失败", successCount, 8);//成功才保存
+        successTable.setValueAt(order.getCardNo(), successCount, 9);
+        successTable.setValueAt(order.getPassword(), successCount, 10);
+        successTable.setValueAt(order.getDeadline(), successCount, 11);
     }
 
     /**
@@ -1303,8 +1409,10 @@ public class BaseUtils_2 implements BaseInterface_2
             row.getCell(3).setCellValue((String) tableModel.getValueAt(i, 3));
             row.createCell(4);
             row.getCell(4).setCellValue((String) tableModel.getValueAt(i, 4));
-            row.createCell(4);
-            row.getCell(4).setCellValue((String) tableModel.getValueAt(i, 5));
+            row.createCell(5);
+            row.getCell(5).setCellValue((String) tableModel.getValueAt(i, 5));
+            row.createCell(6);
+            row.getCell(6).setCellValue((String) tableModel.getValueAt(i, 6));
         }
 
         // 1.4 保存文件
@@ -1355,6 +1463,8 @@ public class BaseUtils_2 implements BaseInterface_2
             row.getCell(9).setCellValue((String) tableModel.getValueAt(i, 9));
             row.createCell(10);
             row.getCell(10).setCellValue((String) tableModel.getValueAt(i, 10));
+            row.createCell(11);
+            row.getCell(11).setCellValue((String) tableModel.getValueAt(i, 11));
         }
 
         // 1.4 保存文件
@@ -1376,6 +1486,24 @@ public class BaseUtils_2 implements BaseInterface_2
      */
     public static String getSameDirWithLib(){
 //        return "D:\\04.my_projects\\grab-JF189\\";//todo
-        return getJarPath().substring(0, getJarPath().lastIndexOf("lib"));
+//        return "D:\\04.my_projects\\projects\\jf.189.cn\\JF189抓取工具_完整版\\images\\";
+        return getJarPath().substring(0, getJarPath().lastIndexOf("lib"));//打包exe会有问题，这里得改成return getJarPath();
+    }
+
+    /**
+     * 是否已经过期
+     * @return true 表示过期 false 表示未过期
+     */
+    public static boolean isDeadLineOff(){
+        String deadLine = PropertyUtil.getInstance().getProperty(CONFIG_DEAD_LINE);
+        if(StringUtils.isBlank(deadLine)){
+            logger.error("未找到配置的有效期");
+            return true;
+        }
+        Date deadLineDate = DateUtil.getDate(deadLine);//时间000000
+        Date nowDate = DateUtil.getDate(DateUtil.getDate(new Date()));//把时间清0
+        boolean isDeadLineOff = deadLineDate.before(nowDate);
+        logger.error("是否已过期:[" + isDeadLineOff + "]");
+        return isDeadLineOff;
     }
 }

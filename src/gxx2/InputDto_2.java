@@ -39,6 +39,11 @@ public class InputDto_2
     String successCount;
 
     /**
+     * 备注
+     */
+    String resv;
+
+    /**
      * 是否校验通过
      */
     boolean isValidate;
@@ -53,13 +58,14 @@ public class InputDto_2
      * @param mobile
      * @param password
      */
-    public InputDto_2(String loginType, String mobile, String password, String userName, String jf, String successCount) {
+    public InputDto_2(String loginType, String mobile, String password, String userName, String jf, String successCount, String resv) {
         this.loginType = loginType;
         this.mobile = mobile;
         this.password = password;
         this.userName = userName;
         this.jf = jf;
         this.successCount = successCount;
+        this.resv = resv;
         this.isValidate = true;
         this.errorMsg = StringUtils.EMPTY;
     }
@@ -126,5 +132,13 @@ public class InputDto_2
 
     public void setLoginType(String loginType) {
         this.loginType = loginType;
+    }
+
+    public String getResv() {
+        return resv;
+    }
+
+    public void setResv(String resv) {
+        this.resv = resv;
     }
 }
