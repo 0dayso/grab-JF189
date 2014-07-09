@@ -66,7 +66,26 @@
     <favorites_list name="grab-JF189" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="BaseUtils_2.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/gxx2/BaseUtils_2.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="1104" column="13" selection-start="58314" selection-end="58314" vertical-scroll-proportion="0.2509225">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BaseUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/gxx/BaseUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="111" column="20" selection-start="2967" selection-end="2967" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -76,7 +95,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/gxx2/Native2AsciiUtil.java" />
         <option value="$PROJECT_DIR$/src/gxx2/Order.java" />
         <option value="$PROJECT_DIR$/src/gxx2/EscapeUtils.java" />
         <option value="$PROJECT_DIR$/src/gxx/HttpClientUtils.java" />
@@ -87,10 +105,11 @@
         <option value="$PROJECT_DIR$/src/core.properties" />
         <option value="$PROJECT_DIR$/src/gxx2/PropertyUtil.java" />
         <option value="$PROJECT_DIR$/src/gxx2/GrabJF189_2.java" />
-        <option value="$PROJECT_DIR$/src/config.properties" />
         <option value="$PROJECT_DIR$/src/gxx2/BaseInterface_2.java" />
         <option value="$PROJECT_DIR$/src/gxx2/RightPanel_2.java" />
         <option value="$PROJECT_DIR$/src/gxx2/CenterPanel_2.java" />
+        <option value="$PROJECT_DIR$/src/config.properties" />
+        <option value="$PROJECT_DIR$/log/log.txt" />
         <option value="$PROJECT_DIR$/src/gxx2/BaseUtils_2.java" />
       </list>
     </option>
@@ -150,6 +169,16 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="grab-JF189" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="grab-JF189" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="grab-JF189" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -437,7 +466,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928678" sideWeight="0.48364887" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -456,8 +485,8 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16388467" sideWeight="0.23752151" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21699545" sideWeight="0.6712565" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5834768" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21699545" sideWeight="0.6712565" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45783132" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
@@ -557,31 +586,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/备注.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/gxx/BaseUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="111" column="20" selection-start="2967" selection-end="2967" vertical-scroll-proportion="0.21801803" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/gxx2/InputDto_2.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="136" column="29" selection-start="2357" selection-end="2357" vertical-scroll-proportion="0.76036036" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/gxx/HttpClientUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="388" column="22" selection-start="13425" selection-end="13425" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="jar://D:/01.study_tools/jdk/jdk1.6.0_64_30/jre/lib/rt.jar!/java/awt/Container.class">
       <provider selected="true" editor-type-id="text-editor">
         <state line="60" column="30" selection-start="2297" selection-end="2297" vertical-scroll-proportion="0.3321033" />
@@ -597,14 +601,14 @@
         <state line="17" column="31" selection-start="304" selection-end="304" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/log4j.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="17" selection-start="39" selection-end="39" vertical-scroll-proportion="0.06846847" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/gxx2/Native2AsciiUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="57" column="25" selection-start="1599" selection-end="1599" vertical-scroll-proportion="0.33333334" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gxx2/GrabJF189_2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="16" selection-start="905" selection-end="905" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/config.properties">
@@ -614,31 +618,64 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gxx2/BaseInterface_2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="165" column="65" selection-start="7982" selection-end="7992" vertical-scroll-proportion="0.71955717" />
+        <state line="109" column="35" selection-start="5682" selection-end="5682" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/gxx2/GrabJF189_2.java">
+    <entry file="file://$PROJECT_DIR$/src/log4j.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="16" selection-start="905" selection-end="905" vertical-scroll-proportion="0.0" />
+        <state line="2" column="17" selection-start="39" selection-end="39" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gxx/GrabJF189.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="71" selection-start="1472" selection-end="1472" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log/log.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="58" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gxx/HttpClientUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="442" column="18" selection-start="15664" selection-end="15670" vertical-scroll-proportion="0.74414414">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gxx/RightPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="6" selection-start="280" selection-end="280" vertical-scroll-proportion="-0.74594593">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gxx2/RightPanel_2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="41" selection-start="4255" selection-end="4255" vertical-scroll-proportion="0.0">
+        <state line="110" column="42" selection-start="3488" selection-end="3488" vertical-scroll-proportion="0.6846847">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gxx2/CenterPanel_2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="25" selection-start="1822" selection-end="1822" vertical-scroll-proportion="0.0">
+        <state line="931" column="16" selection-start="37926" selection-end="37926" vertical-scroll-proportion="0.12177122">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gxx/BaseUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="111" column="20" selection-start="2967" selection-end="2967" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gxx2/BaseUtils_2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1072" column="60" selection-start="56866" selection-end="56866" vertical-scroll-proportion="0.39114392">
+        <state line="1104" column="13" selection-start="58314" selection-end="58314" vertical-scroll-proportion="0.2509225">
           <folding />
         </state>
       </provider>

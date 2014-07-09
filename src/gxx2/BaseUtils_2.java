@@ -159,11 +159,16 @@ public class BaseUtils_2 implements BaseInterface_2
      */
     public static Map loginMB(GrabJF189_2 grabJF189, String userName, String password, String check, String springWebFlow, Cookie[] cookies)
         throws Exception{
+        BaseUtils_2.loggerOut(grabJF189, "登陆手机开始========userName=[" +userName+ "],password=[" +password+ "],check=[" +check+ "],springWebFlow=[" +springWebFlow+ "]");
+
         String province = BaseUtils_2.getProvinceByMobile(grabJF189, userName);
         String provinceNum = province.substring(0, province.indexOf("|"));
         String provinceStr = province.substring(province.indexOf("|") + "|".length());
+        BaseUtils_2.loggerOut(grabJF189, "provinceNum=" + provinceNum + ",provinceStr=" + provinceStr);
 
         PostMethod method = new PostMethod(LOGIN_URL);
+        logger.info("url=" + LOGIN_URL);
+        BaseUtils_2.loggerOut(grabJF189, "url=" + LOGIN_URL);
         //参数
         method.addParameter("forbidpass", "null");
         method.addParameter("forbidaccounts", "null");
@@ -187,11 +192,20 @@ public class BaseUtils_2 implements BaseInterface_2
         method.addParameter("lt", springWebFlow);
 
         for(NameValuePair nameValuePair :  method.getParameters()){
-            logger.info(nameValuePair.getName() + "=" + nameValuePair.getValue());
+            BaseUtils_2.loggerOut(grabJF189, (nameValuePair.getName() + "=" + nameValuePair.getValue()));
         }
 
         //结果集合
         Map result = HttpClientUtils.connect(method, "UTF-8", cookies);//返回结果
+
+        boolean isSuccess = (Boolean) result.get(KEY_IS_SUCCESS);//判是否成功
+        BaseUtils_2.loggerOut(grabJF189, "isSuccess=" + isSuccess);
+        String webContent = (String) result.get(KEY_RESP_STR);//判是否成功
+        BaseUtils_2.loggerOut(grabJF189, "webContent=" + webContent);
+        Map headerMap = (Map) result.get(KEY_RESPONSE_HEADER_MAP);//返回头
+        String jumpUrl = (String) headerMap.get("Location");
+        BaseUtils_2.loggerOut(grabJF189, "jumpUrl=" + jumpUrl);
+
         //返回结果
         return result;
     }
@@ -384,28 +398,50 @@ public class BaseUtils_2 implements BaseInterface_2
      * @param jumpUrl
      */
     public static Map jump(GrabJF189_2 grabJF189, String jumpUrl) {
-        // 4.登陆验证成功，第一次跳转，地址位于ResponseHeaders中的的Location
-        logger.info("登陆验证成功，第一次跳转，地址:" + jumpUrl);
         Map result = new HashMap();
-        try{
-            result = HttpClientUtils.getUrl(jumpUrl, "UTF-8", "GBK", new Cookie[]{});//返回结果 可以不带cookie
-        } catch (Exception e){
-            result.put(KEY_IS_SUCCESS, false);
-            String errorMessage = "登陆验证第一次跳转失败，请重新登陆！";
-            BaseUtils_2.loggerOut(grabJF189, errorMessage);
-            BaseUtils_2.alertErrorMessage(errorMessage);
-            return result;
+        String webContent = StringUtils.EMPTY;
+        boolean isSuccess = Boolean.FALSE;
+
+        /**
+         * 电信网络给10次机会，如果跳转返回空，再跳一次
+         */
+        int firstJumpCount = 0;
+        while (firstJumpCount < 10){
+            firstJumpCount ++;
+            // 4.登陆验证成功，第一次跳转，地址位于ResponseHeaders中的的Location
+            logger.info("登陆验证成功，第一次跳转，地址:" + jumpUrl);
+            try{
+                result = HttpClientUtils.getUrl(jumpUrl, "UTF-8", "GBK", new Cookie[]{});//返回结果 可以不带cookie
+            } catch (Exception e){
+                result.put(KEY_IS_SUCCESS, false);
+                String errorMessage = "登陆验证第一次跳转失败，请重新登陆！";
+                BaseUtils_2.loggerOut(grabJF189, errorMessage);
+                BaseUtils_2.alertErrorMessage(errorMessage);
+                return result;
+            }
+            isSuccess = (Boolean)result.get(KEY_IS_SUCCESS);//判是否成功
+            if(!isSuccess)
+            {
+                String errorMessage = "登陆验证第一次跳转失败，请重新登陆！";
+                BaseUtils_2.loggerOut(grabJF189, errorMessage);
+                BaseUtils_2.alertErrorMessage(errorMessage);
+                return result;
+            }
+            webContent = (String)result.get(HttpClientUtils.KEY_RESP_STR);//网页内容
+            logger.info("[" + firstJumpCount + "]第一次跳转，返回内容" + webContent);
+            if(StringUtils.isNotBlank(webContent)){
+                break;
+            }
         }
-        boolean isSuccess = (Boolean)result.get(KEY_IS_SUCCESS);//判是否成功
-        if(!isSuccess)
-        {
-            String errorMessage = "登陆验证第一次跳转失败，请重新登陆！";
+
+        if(StringUtils.isBlank(webContent)){
+            String errorMessage = "10次机会过后，第一次跳转返回内容仍然为空！";
             BaseUtils_2.loggerOut(grabJF189, errorMessage);
-            BaseUtils_2.alertErrorMessage(errorMessage);
-            return result;
+            BaseUtils_2.alertErrorMessage("登陆验证成功后，第一次跳转返回内容为空，请重新尝试！");
+            // 加载验证码
+            grabJF189.centerPanel.loadCheckImg();
         }
-        String webContent = (String)result.get(HttpClientUtils.KEY_RESP_STR);//网页内容
-        logger.info("第一次跳转，返回内容" + webContent);
+
         Map headerMap = (Map)result.get(HttpClientUtils.KEY_RESPONSE_HEADER_MAP);//返回头
         //cookies = (Cookie[])result.get(HttpClientUtils.KEY_RESPONSE_COOKIES);//返回头
 
@@ -1487,6 +1523,7 @@ public class BaseUtils_2 implements BaseInterface_2
     public static String getSameDirWithLib(){
 //        return "D:\\04.my_projects\\grab-JF189\\";//todo
 //        return "D:\\04.my_projects\\projects\\jf.189.cn\\JF189抓取工具_完整版\\images\\";
+//        return "D:\\04.my_projects\\projects\\jf.189.cn\\JF189抓取工具_完整版\\";//todo
         return getJarPath().substring(0, getJarPath().lastIndexOf("lib"));//打包exe会有问题，这里得改成return getJarPath();
     }
 
